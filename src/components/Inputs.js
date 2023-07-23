@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { UilSearch, UilLocationPoint } from "@iconscout/react-unicons";
 import { toast } from "react-toastify";
 
 function Inputs({ units, setQuery, setUnits }) {
   const [city, setCity] = useState("");
+  const inputEl = useRef(null);
 
   function handelClick() {
     if (city !== "") setQuery({ q: city });
@@ -12,8 +13,15 @@ function Inputs({ units, setQuery, setUnits }) {
 
   useEffect(
     function () {
+      inputEl.current.focus();
+
       function callback(e) {
-        if (e.code === "Enter") handelClick();
+        if (document.activeElement === inputEl) return;
+        if (e.code === "Enter") {
+          inputEl.current.focus();
+          handelClick();
+          setCity("");
+        }
       }
       document.addEventListener("keydown", callback);
       return function () {
@@ -43,6 +51,7 @@ function Inputs({ units, setQuery, setUnits }) {
     <div className="flex justify-center flex-row my-6">
       <div className="w-3/4 flex justify-center items-center space-x-4 ">
         <input
+          ref={inputEl}
           value={city}
           type="text"
           placeholder="Search for city..."

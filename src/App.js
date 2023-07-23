@@ -25,6 +25,7 @@ function App() {
   }
 
   useEffect(() => {
+    const controller = new AbortController();
     async function fetchWeather() {
       try {
         setIsLoading(true);
@@ -36,6 +37,9 @@ function App() {
           );
           setWeatherData(data);
           // console.log(data);
+          return () => {
+            controller.abort();
+          };
         });
       } catch (err) {
         toast.error("Error");
